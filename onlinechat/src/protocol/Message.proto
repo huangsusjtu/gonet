@@ -1,0 +1,72 @@
+syntax = "proto3";
+package protocol;
+
+// Request
+enum ACTION{
+	USER_REG = 0;
+	USER_LOGIN = 1;
+	CHAT_ROOM = 2;
+	CHAT_MMS = 3;
+}
+
+message Request {
+	int32 action = 1;
+	int64 sessionId = 3;
+	UserReqInfo userinfo = 4;
+	ChatMessage ms = 5;
+}
+
+// Response
+enum CODE {
+	RESERVE = 0;
+	OK = 1;
+	PARAM_ERROR = 2;
+	SERVER_ERROR = 3;
+	USER_EXIST = 4;
+	USER_NOEXIST = 5;
+	USER_AUTH_SUCCESS = 6;
+	USER_AUTH_FAIL = 7;
+	USER_NOLOGIN = 8;
+	USER_MESSAGE = 9;
+}
+
+message Response {
+	int32 code = 1;
+	int64 userId = 2;
+	string errmsg = 3;
+	ChatMessage ms = 4;
+}
+
+//  User infomation of request 
+message UserReqInfo {
+	int32 type = 1;
+	string username = 2;
+	string email = 3;
+	string phone = 4;
+	string desc = 5;
+	string password = 6;
+}
+
+
+
+// ChatMessage infomation of request
+// Uid is user id, means who send this message
+// chatId is target room Id
+// content is user want to send
+message ChatMessage {
+	int64 uid = 1;
+	// ChatRoom
+	// room has a unique id
+	// romm has a list of user
+	message ChatRoom {
+		int64 chatId = 1;
+		repeated int64 uid = 2;
+	}
+
+	ChatRoom room = 2;
+	string content = 3;
+}
+
+
+
+//protoc -I=$SRC_DIR --go_out=$DST_DIR  $SRC_DIR/addressbook.proto
